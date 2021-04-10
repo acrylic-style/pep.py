@@ -123,6 +123,7 @@ if __name__ == "__main__":
 		try:
 			# TODO: Make function or some redis meme
 			glob.redis.set("ripple:online_users", 0)
+			glob.redis.eval("return redis.call('del', unpack(redis.call('keys', ARGV[1])))", 0, "ripple:*")
 			glob.redis.eval("return redis.call('del', unpack(redis.call('keys', ARGV[1])))", 0, "peppy:*")
 		except redis.exceptions.ResponseError:
 			# Script returns error if there are no keys starting with peppy:*

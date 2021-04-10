@@ -57,6 +57,7 @@ def handle(tornadoRequest):
 			raise exceptions.loginFailedException()
 		if not userUtils.checkLogin(userID, loginData[1]):
 			# Invalid password
+			log.info("Failed to login: {} [{}] (invalid password)".format(username, userID))
 			raise exceptions.loginFailedException()
 
 		# Make sure we are not banned or locked
@@ -221,6 +222,7 @@ def handle(tornadoRequest):
 		# Set reponse data to right value and reset our queue
 		responseData = responseToken.queue
 		responseToken.resetQueue()
+		log.info("User {} successfully logged in!".format(username))
 	except exceptions.loginFailedException:
 		# Login failed error packet
 		# (we don't use enqueue because we don't have a token since login has failed)
