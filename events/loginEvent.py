@@ -61,10 +61,9 @@ def handle(tornadoRequest):
 			raise exceptions.loginFailedException()
 
 		# Make sure we are not banned or locked
-		priv = userUtils.getPrivileges(userID)
-		if userUtils.isBanned(userID) and priv & privileges.USER_PENDING_VERIFICATION == 0:
+		if userUtils.isBanned(userID):
 			raise exceptions.loginBannedException()
-		if userUtils.isLocked(userID) and priv & privileges.USER_PENDING_VERIFICATION == 0:
+		if userUtils.isLocked(userID):
 			raise exceptions.loginLockedException()
 
 		# 2FA check
@@ -76,7 +75,7 @@ def handle(tornadoRequest):
 
 		# Verify this user (if pending activation)
 		firstLogin = False
-		if priv & privileges.USER_PENDING_VERIFICATION > 0 or not userUtils.hasVerifiedHardware(userID):
+		if not userUtils.hasVerifiedHardware(userID):
 			if userUtils.verifyUser(userID, clientData):
 				# Valid account
 				log.info("Account {} verified successfully!".format(userID))
@@ -119,10 +118,6 @@ def handle(tornadoRequest):
 				expireIn = "{} days".format(expireDays) if expireDays > 1 else "less than 24 hours"
 				responseToken.enqueue(serverPackets.notification("Your donor tag expires in {}! When your donor tag expires, you won't have any of the donor privileges, like yellow username, custom badge and discord custom role and username color! If you wish to keep supporting Ripple and you don't want to lose your donor privileges, you can donate again by clicking on 'Support us' on Ripple's website.".format(expireIn)))
 
-		# Deprecate telegram 2fa and send alert
-		if userUtils.deprecateTelegram2Fa(userID):
-			responseToken.enqueue(serverPackets.notification("As stated on our blog, Telegram 2FA has been deprecated on 29th June 2018. Telegram 2FA has just been disabled from your account. If you want to keep your account secure with 2FA, please enable TOTP-based 2FA from our website https://ripple.moe. Thank you for your patience."))
-
 		# Set silence end UNIX time in token
 		responseToken.silenceEndTime = userUtils.getSilenceEnd(userID)
 
@@ -142,9 +137,8 @@ def handle(tornadoRequest):
 		if glob.restarting:
 			raise exceptions.banchoRestartingException()
 
-		# Send login notification before maintenance message
-		if glob.banchoConf.config["loginNotification"] != "":
-			responseToken.enqueue(serverPackets.notification(glob.banchoConf.config["loginNotification"]))
+		# Send login notification before maintenance message (loginNotification)
+		responseToken.enqueue(serverPackets.notification("Hello {}! This server is running pep.py v{}.".format(username, glob.VERSION)))
 
 		# Maintenance check
 		if glob.banchoConf.config["banchoMaintenance"]:

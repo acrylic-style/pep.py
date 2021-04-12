@@ -86,6 +86,11 @@ class config:
 
 			parsedConfig.get("localize", "enable")
 			parsedConfig.get("localize", "ipapiurl")
+
+			parsedConfig.get("bancho", "maintenance")
+			parsedConfig.get("bancho", "freedirect")
+			parsedConfig.get("bancho", "menuiconfileid")
+			parsedConfig.get("bancho", "menuiconurl")
 			return True
 		except configparser.Error:
 			return False
@@ -155,6 +160,12 @@ class config:
 		self.config.add_section("localize")
 		self.config.set("localize", "enable", "1")
 		self.config.set("localize", "ipapiurl", "http://ip.zxq.co")
+
+		self.config.add_section("bancho")
+		self.config.set("bancho", "maintenance", "0")
+		self.config.set("bancho", "freedirect", "1")
+		self.config.set("bancho", "menuiconfileid", "")
+		self.config.set("bancho", "menuiconurl", "")
 
 		# Write ini to file and close
 		self.config.write(f)

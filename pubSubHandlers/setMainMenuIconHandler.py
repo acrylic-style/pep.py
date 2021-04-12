@@ -18,17 +18,10 @@ class handler(generalPubSubHandler.generalPubSubHandler):
 			return
 		targetTokens = glob.tokens.getTokenFromUserID(data["userID"], ignoreIRC=True, _all=True)
 		if targetTokens:
-			icon = glob.db.fetch(
-				"SELECT file_id, url FROM main_menu_icons WHERE id = %s LIMIT 1",
-				(data["mainMenuIconID"],)
-			)
-			if icon is None:
+			if glob.banchoConf.config["menuIcon"] == "":
 				log.warning("Tried to test an unknown main menu icon")
 				return
 			for x in targetTokens:
 				x.enqueue(
-					serverPackets.mainMenuIcon("{}|{}".format(
-						"https://i.ppy.sh/{}.png".format(icon["file_id"]),
-						icon["url"]
-					))
+					serverPackets.mainMenuIcon(glob.banchoConf.config["menuIcon"])
 				)

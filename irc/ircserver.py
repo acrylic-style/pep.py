@@ -279,17 +279,17 @@ class Client:
 				self.reply461("PASS")
 			else:
 				# IRC token check
-				m = hashlib.md5()
-				m.update(arguments[0].encode("utf-8"))
-				tokenHash = m.hexdigest()
-				supposedUser = glob.db.fetch("SELECT users.username, users.id FROM users LEFT JOIN irc_tokens ON users.id = irc_tokens.userid WHERE irc_tokens.token = %s LIMIT 1", [tokenHash])
-				if supposedUser:
-					self.supposedUsername = chat.fixUsernameForIRC(supposedUser["username"])
-					self.supposedUserID = supposedUser["id"]
-					self.__handleCommand = self.registerHandler
-				else:
-					# Wrong IRC Token
-					self.reply("464 :Password incorrect")
+				# m = hashlib.md5()
+				# m.update(arguments[0].encode("utf-8"))
+				# tokenHash = m.hexdigest()
+				# supposedUser = glob.db.fetch("SELECT phpbb_users.username, phpbb_users.user_id AS `id` FROM users LEFT JOIN irc_tokens ON phpbb_users.user_id = irc_tokens.userid WHERE irc_tokens.token = %s LIMIT 1", [tokenHash])
+				# if supposedUser:
+				# 	self.supposedUsername = chat.fixUsernameForIRC(supposedUser["username"])
+				# 	self.supposedUserID = supposedUser["id"]
+				# 	self.__handleCommand = self.registerHandler
+				# else:
+				# Wrong IRC Token
+				self.reply("464 :Password incorrect")
 		elif command == "QUIT":
 			self.disconnect()
 

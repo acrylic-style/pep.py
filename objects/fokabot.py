@@ -47,7 +47,7 @@ def fokabotResponse(fro, chan, message):
 			# Make sure the user has right permissions
 			if i["privileges"] is not None:
 				# Rank = x
-				if userUtils.getPrivileges(userUtils.getID(fro)) & i["privileges"] == 0:
+				if userUtils.isInPrivilegeGroupId(userUtils.getID(fro), i["privileges"]) == 0:
 					return False
 
 			# Check argument number

@@ -338,7 +338,7 @@ def fixUsernameForBancho(username):
 		return username
 
 	# Exact match first
-	result = glob.db.fetch("SELECT id FROM users WHERE username = %s LIMIT 1", [username])
+	result = glob.db.fetch("SELECT user_id AS `id` FROM phpbb_users WHERE username = %s LIMIT 1", [username])
 	if result is not None:
 		return username
 

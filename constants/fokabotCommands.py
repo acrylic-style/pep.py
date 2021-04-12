@@ -22,12 +22,12 @@ from common.web import cheesegull
 
 
 def bloodcatMessage(beatmapID):
-	beatmap = glob.db.fetch("SELECT song_name, beatmapset_id FROM beatmaps WHERE beatmap_id = %s LIMIT 1", [beatmapID])
+	beatmap = glob.db.fetch("SELECT n.beatmapset_id, n.title FROM osu_beatmaps s INNER JOIN osu_beatmapsets n ON s.beatmapset_id = n.beatmapset_id WHERE s.beatmap_id = %s LIMIT 1;", [beatmapID])
 	if beatmap is None:
 		return "Sorry, I'm not able to provide a download link for this map :("
-	return "Download [https://bloodcat.com/osu/s/{} {}] from Bloodcat".format(
+	return "Download [https://osu.acrylicstyle.xyz/beatmapsets/{} {}]".format(
 		beatmap["beatmapset_id"],
-		beatmap["song_name"],
+		beatmap["title"],
 	)
 
 """
@@ -56,8 +56,8 @@ def faq(fro, chan, message):
 		"swearing": "Please don't abuse swearing",
 		"spam": "Please don't spam",
 		"offend": "Please don't offend other players",
-		"github": "(Ripple's Github page!)[https://github.com/osuripple/ripple]",
-		"discord": "(Join Ripple's Discord!)[https://discord.gg/0rJcZruIsA6rXuIx]",
+		"github": "(osu!'s Github page!)[https://github.com/acrylic-style/ripple]",
+		"discord": "(Join my Discord!)[https://discord.gg/tZTnzfU6p5]",
 		"blog": "You can find the latest Ripple news on the (blog)[https://blog.ripple.moe]!",
 		"changelog": "Check the (changelog)[https://ripple.moe/changelog] !",
 		"status": "Check the server status (here!)[https://status.ripple.moe]",
@@ -599,72 +599,6 @@ def tillerinoAcc(fro, chan, message):
 	except:
 		return False
 
-def tillerinoLast(fro, chan, message):
-	try:
-		# Run the command in PM only
-		if chan.startswith("#"):
-			return False
-
-		data = glob.db.fetch("""SELECT beatmaps.song_name as sn, scores.*,
-			beatmaps.beatmap_id as bid, beatmaps.difficulty_std, beatmaps.difficulty_taiko, beatmaps.difficulty_ctb, beatmaps.difficulty_mania, beatmaps.max_combo as fc
-		FROM scores
-		LEFT JOIN beatmaps ON beatmaps.beatmap_md5=scores.beatmap_md5
-		LEFT JOIN users ON users.id = scores.userid
-		WHERE users.username = %s
-		ORDER BY scores.time DESC
-		LIMIT 1""", [fro])
-		if data is None:
-			return False
-
-		diffString = "difficulty_{}".format(gameModes.getGameModeForDB(data["play_mode"]))
-		rank = generalUtils.getRank(data["play_mode"], data["mods"], data["accuracy"],
-									data["300_count"], data["100_count"], data["50_count"], data["misses_count"])
-
-		ifPlayer = "{0} | ".format(fro) if chan != "FokaBot" else ""
-		ifFc = " (FC)" if data["max_combo"] == data["fc"] else " {0}x/{1}x".format(data["max_combo"], data["fc"])
-		beatmapLink = "[http://osu.ppy.sh/b/{1} {0}]".format(data["sn"], data["bid"])
-
-		hasPP = data["play_mode"] != gameModes.CTB
-
-		msg = ifPlayer
-		msg += beatmapLink
-		if data["play_mode"] != gameModes.STD:
-			msg += " <{0}>".format(gameModes.getGameModeForPrinting(data["play_mode"]))
-
-		if data["mods"]:
-			msg += ' +' + generalUtils.readableMods(data["mods"])
-
-		if not hasPP:
-			msg += " | {0:,}".format(data["score"])
-			msg += ifFc
-			msg += " | {0:.2f}%, {1}".format(data["accuracy"], rank.upper())
-			msg += " {{ {0} / {1} / {2} / {3} }}".format(data["300_count"], data["100_count"], data["50_count"], data["misses_count"])
-			msg += " | {0:.2f} stars".format(data[diffString])
-			return msg
-
-		msg += " ({0:.2f}%, {1})".format(data["accuracy"], rank.upper())
-		msg += ifFc
-		msg += " | {0:.2f}pp".format(data["pp"])
-
-		stars = data[diffString]
-		if data["mods"]:
-			token = glob.tokens.getTokenFromUsername(fro)
-			if token is None:
-				return False
-			userID = token.userID
-			token.tillerino[0] = data["bid"]
-			token.tillerino[1] = data["mods"]
-			token.tillerino[2] = data["accuracy"]
-			oppaiData = getPPMessage(userID, just_data=True)
-			if "stars" in oppaiData:
-				stars = oppaiData["stars"]
-
-		msg += " | {0:.2f} stars".format(stars)
-		return msg
-	except Exception as a:
-		log.error(a)
-		return False
-
 def mm00(fro, chan, message):
 	random.seed()
 	return random.choice(["meme", "MA MAURO ESISTE?"])
@@ -757,7 +691,7 @@ def report(fro, chan, message):
 			chatlog = token.getMessagesBufferString()
 
 		# Everything is fine, submit report
-		glob.db.execute("INSERT INTO reports (id, from_uid, to_uid, reason, chatlog, time) VALUES (NULL, %s, %s, %s, %s, %s)", [userUtils.getID(fro), targetID, "{reason} - ingame {info}".format(reason=reason, info="({})".format(additionalInfo) if additionalInfo is not None else ""), chatlog, int(time.time())])
+		#glob.db.execute("INSERT INTO reports (id, from_uid, to_uid, reason, chatlog, time) VALUES (NULL, %s, %s, %s, %s, %s)", [userUtils.getID(fro), targetID, "{reason} - ingame {info}".format(reason=reason, info="({})".format(additionalInfo) if additionalInfo is not None else ""), chatlog, int(time.time())])
 		msg = "You've reported {target} for {reason}{info}. A Community Manager will check your report as soon as possible. Every !report message you may see in chat wasn't sent to anyone, so nobody in chat, but admins, know about your report. Thank you for reporting!".format(target=target, reason=reason, info="" if additionalInfo is None else " (" + additionalInfo + ")")
 		adminMsg = "{user} has reported {target} for {reason} ({info})".format(user=fro, target=target, reason=reason, info=additionalInfo)
 
@@ -960,15 +894,15 @@ def multiplayer(fro, chan, message):
 		gameMode = int(message[2]) if len(message) == 3 else 0
 		if gameMode < 0 or gameMode > 3:
 			raise exceptions.invalidArgumentsException("Gamemode must be 0, 1, 2 or 3")
-		beatmapData = glob.db.fetch("SELECT * FROM beatmaps WHERE beatmap_id = %s LIMIT 1", [beatmapID])
+		beatmapData = glob.db.fetch("SELECT * FROM osu_beatmaps WHERE beatmap_id = %s LIMIT 1", [beatmapID])
 		if beatmapData is None:
 			raise exceptions.invalidArgumentsException("The beatmap you've selected couldn't be found in the database."
 													   "If the beatmap id is valid, please load the scoreboard first in "
 													   "order to cache it, then try again.")
 		_match = glob.matches.matches[getMatchIDFromChannel(chan)]
 		_match.beatmapID = beatmapID
-		_match.beatmapName = beatmapData["song_name"]
-		_match.beatmapMD5 = beatmapData["beatmap_md5"]
+		_match.beatmapName = beatmapData["title"]
+		_match.beatmapMD5 = beatmapData["checksum"]
 		_match.gameMode = gameMode
 		_match.resetReady()
 		_match.sendUpdates()
@@ -1365,9 +1299,6 @@ commands = [
 		"trigger": "!with",
 		"callback": tillerinoMods,
 		"syntax": "<mods>"
-	}, {
-		"trigger": "!last",
-		"callback": tillerinoLast
 	}, {
 		"trigger": "!ir",
 		"privileges": privileges.ADMIN_MANAGE_SERVERS,
