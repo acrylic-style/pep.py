@@ -29,7 +29,6 @@ class token:
 		self.userID = userID
 		self.username = userUtils.getUsername(self.userID)
 		self.safeUsername = userUtils.getSafeUsername(self.userID)
-		# self.privileges = userUtils.getPrivileges(self.userID)
 		self.admin = userUtils.isInPrivilegeGroup(self.userID, "dev")\
 					 or userUtils.isInPrivilegeGroup(self.userID, "gmt")\
 					 or userUtils.isInPrivilegeGroup(self.userID, "admin")\

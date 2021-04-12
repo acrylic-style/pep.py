@@ -96,11 +96,12 @@ def userPanel(userID, force = False):
 	userRank = 0
 	if username == "FokaBot":
 		userRank |= userRanks.MOD
-	elif userUtils.isInPrivilegeGroup(userID, "developer"):
+	elif userUtils.isInPrivilegeGroup(userID, "dev") or userUtils.isInPrivilegeGroup(userID, "admin"):
 		userRank |= userRanks.ADMIN
-	elif userUtils.isInPrivilegeGroup(userID, "chat mod"):
+	elif userUtils.isInPrivilegeGroup(userID, "nat") or userUtils.isInPrivilegeGroup(userID, "gmt"):
 		userRank |= userRanks.MOD
-	elif (userToken.privileges & privileges.USER_DONOR) > 0:
+		userUtils.
+	elif userUtils.isSupporter(userID):
 		userRank |= userRanks.SUPPORTER
 	else:
 		userRank |= userRanks.NORMAL
