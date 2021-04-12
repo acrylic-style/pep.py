@@ -132,7 +132,7 @@ cpdef bytes packData(__data, int dataType):
 
 	# Pack if needed
 	if pack:
-		data += struct.pack(packType, __data)
+		data += struct.pack(packType, int(__data))
 
 	return data
 
