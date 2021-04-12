@@ -26,8 +26,8 @@ class banchoConfig:
 
 
 	def loadSettings(self):
-		self.config["banchoMaintenance"] = glob.conf.config["bancho"]["maintenance"]
-		self.config["freeDirect"] = glob.conf.config["bancho"]["freedirect"]
+		self.config["banchoMaintenance"] = glob.conf.config["bancho"]["maintenance"] == 1
+		self.config["freeDirect"] = glob.conf.config["bancho"]["freedirect"] == 1
 		mainMenuIconId = glob.conf.config["bancho"]["menuiconfileid"]
 		mainMenuIconUrl = glob.conf.config["bancho"]["menuiconurl"]
 		if mainMenuIconId is "" or mainMenuIconUrl is "":
