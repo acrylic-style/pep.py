@@ -100,7 +100,6 @@ def userPanel(userID, force = False):
 		userRank |= userRanks.ADMIN
 	elif userUtils.isInPrivilegeGroup(userID, "nat") or userUtils.isInPrivilegeGroup(userID, "gmt"):
 		userRank |= userRanks.MOD
-		userUtils.
 	elif userUtils.isSupporter(userID):
 		userRank |= userRanks.SUPPORTER
 	else:
