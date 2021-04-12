@@ -13,10 +13,10 @@ class channelList:
 		Load chat channels from db and add them to channels list
 		:return:
 		"""
-		self.addChannel("#osu", "osu! chat", true, true)
-		self.addChannel("#announce", "anything", true, false)
-		self.addChannel("#admin", "admin chat", false, false)
-		self.addChannel("#lobby", "multiplayer lobby", true, true)
+		self.addChannel("#osu", "osu! chat", True, True)
+		self.addChannel("#announce", "anything", True, False)
+		self.addChannel("#admin", "admin chat", False, False)
+		self.addChannel("#lobby", "multiplayer lobby", True, True)
 		# # Get channels from DB
 		# channels = glob.db.fetchAll("SELECT * FROM bancho_channels")
 
