@@ -449,7 +449,7 @@ class token:
 			log.warning("Stats query returned None")
 			return
 		self.rankedScore = stats["rankedScore"]
-		self.accuracy = stats["accuracy"]
+		self.accuracy = stats["accuracy_total"] / 10000 / stats["accuracy_count"]
 		self.playcount = stats["playcount"]
 		self.totalScore = stats["totalScore"]
 		self.gameRank = stats["gameRank"]
