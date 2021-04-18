@@ -126,19 +126,19 @@ def userStats(userID, force = False):
 
 	return packetHelper.buildPacket(packetIDs.server_userStats,
 	[
-		[userID, dataTypes.UINT32],
+		[int(userID), dataTypes.UINT32],
 		[userToken.actionID, dataTypes.BYTE],
-		[userToken.actionText, dataTypes.STRING],
-		[userToken.actionMd5, dataTypes.STRING],
-		[userToken.actionMods, dataTypes.SINT32],
+		[str(userToken.actionText), dataTypes.STRING],
+		[str(userToken.actionMd5), dataTypes.STRING],
+		[int(userToken.actionMods), dataTypes.SINT32],
 		[userToken.gameMode, dataTypes.BYTE],
-		[userToken.beatmapID, dataTypes.SINT32],
-		[userToken.rankedScore, dataTypes.UINT64],
-		[userToken.accuracy, dataTypes.FFLOAT],
-		[userToken.playcount, dataTypes.UINT32],
-		[userToken.totalScore, dataTypes.UINT64],
-		[userToken.gameRank, dataTypes.UINT32],
-		[userToken.pp if 65535 >= userToken.pp > 0 else 0, dataTypes.UINT16]
+		[int(userToken.beatmapID), dataTypes.SINT32],
+		[int(userToken.rankedScore), dataTypes.UINT64],
+		[float(userToken.accuracy), dataTypes.FFLOAT],
+		[int(userToken.playcount), dataTypes.UINT32],
+		[int(userToken.totalScore), dataTypes.UINT64],
+		[int(userToken.gameRank), dataTypes.UINT32],
+		[int(userToken.pp if 65535 >= userToken.pp > 0 else 0), dataTypes.UINT16]
 	])
 
 
