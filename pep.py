@@ -53,6 +53,15 @@ def make_app():
 		(r"/stress", heavyHandler.handler)
 	])
 
+def sqlLoop():
+	"""
+	Executes SELECT 1 every minute to keep sql connection
+	"""
+	try:
+		glob.db.fetch("SELECT 1")
+	finally:
+		threading.Timer(60, sqlLoop).start()
+
 
 if __name__ == "__main__":
 	# AGPL license agreement
@@ -193,6 +202,10 @@ if __name__ == "__main__":
 		# Initialize multiplayer cleanup loop
 		consoleHelper.printNoNl("> Initializing multiplayer cleanup loop... ")
 		glob.matches.cleanupLoop()
+		consoleHelper.printDone()
+
+		consoleHelper.printNoNl("> Initializing mysql connection check loop... ")
+		sqlLoop()
 		consoleHelper.printDone()
 
 		# Localize warning
