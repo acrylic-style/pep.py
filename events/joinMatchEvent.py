@@ -25,6 +25,7 @@ def handle(userToken, packetData):
 		with glob.matches.matches[matchID] as match:
 			if match.matchPassword != "" and match.matchPassword != password:
 				raise exceptions.matchWrongPasswordException()
+			log.info("Accepted password {} for mp room {}".format(matchID, password))
 
 			# Password is correct, join match
 			userToken.joinMatch(matchID)
