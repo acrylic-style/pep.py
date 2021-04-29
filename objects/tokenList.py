@@ -24,7 +24,7 @@ class tokenList:
 	def __exit__(self, exc_type, exc_val, exc_tb):
 		self._lock.release()
 
-	def addToken(self, userID, ip = "", irc = False, timeOffset=0, tournament=False):
+	def addToken(self, userID, ip="", irc=False, timeOffset=0, tournament=False):
 		"""
 		Add a token object to tokens list
 
@@ -78,6 +78,8 @@ class tokenList:
 					only the first occurrence.
 		:return: False if not found, token object if found
 		"""
+		if userID is None:
+			return None
 		# Make sure the token exists
 		ret = []
 		userID = int(userID)

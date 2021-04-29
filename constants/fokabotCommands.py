@@ -1327,14 +1327,14 @@ commands = [
 		"syntax": "<mods>"
 	}, {
 		"trigger": "!ir",
-		"privileges": "gmt",
+		"privileges": "admin",
 		"callback": instantRestart
 	}, {
 		"trigger": "!pp",
 		"callback": pp
-	}, {
-		"trigger": "!update",
-		"callback": updateBeatmap
+	# }, {
+	# 	"trigger": "!update",
+	# 	"callback": updateBeatmap
 	}, {
 		"trigger": "!mp",
 		#"privileges": privileges.USER_TOURNAMENT_STAFF,
