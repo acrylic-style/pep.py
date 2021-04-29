@@ -25,10 +25,12 @@ def bloodcatMessage(beatmapID):
 	beatmap = glob.db.fetch("SELECT n.beatmapset_id, n.title FROM osu_beatmaps s INNER JOIN osu_beatmapsets n ON s.beatmapset_id = n.beatmapset_id WHERE s.beatmap_id = %s LIMIT 1;", [beatmapID])
 	if beatmap is None:
 		return "Sorry, I'm not able to provide a download link for this map :("
-	return "Download [https://osu.acrylicstyle.xyz/beatmapsets/{} {}]".format(
+	return "Download [https://osu.acrylicstyle.xyz/beatmapsets/{}/download {}] | [https://osu.ppy.sh/beatmapsets/{} bancho]".format(
 		beatmap["beatmapset_id"],
 		beatmap["title"],
+		beatmap["beatmapset_id"],
 	)
+
 
 """
 Commands callbacks
@@ -44,10 +46,13 @@ Must have fro, chan and messages as arguments
 return the message or **False** if there's no response by the bot
 TODO: Change False to None, because False doesn't make any sense
 """
+
+
 def instantRestart(fro, chan, message):
 	glob.streams.broadcast("main", serverPackets.notification("We are restarting Bancho. Be right back!"))
 	systemHelper.scheduleShutdown(0, True, delay=5)
 	return False
+
 
 def faq(fro, chan, message):
 	# TODO: Unhardcode this
@@ -70,6 +75,7 @@ def faq(fro, chan, message):
 		return False
 	return messages[key]
 
+
 def roll(fro, chan, message):
 	maxPoints = 100
 	if len(message) >= 1:
@@ -79,8 +85,10 @@ def roll(fro, chan, message):
 	points = random.randrange(0,maxPoints)
 	return "{} rolls {} points!".format(fro, str(points))
 
+
 #def ask(fro, chan, message):
 #	return random.choice(["yes", "no", "maybe"])
+
 
 def alert(fro, chan, message):
 	msg = ' '.join(message[:]).strip()
@@ -88,6 +96,7 @@ def alert(fro, chan, message):
 		return False
 	glob.streams.broadcast("main", serverPackets.notification(msg))
 	return False
+
 
 def alertUser(fro, chan, message):
 	target = message[0].lower()
@@ -100,6 +109,7 @@ def alertUser(fro, chan, message):
 		return False
 	else:
 		return "User offline."
+
 
 def moderated(fro, chan, message):
 	try:
@@ -119,6 +129,7 @@ def moderated(fro, chan, message):
 	except exceptions.moderatedPMException:
 		return "You are trying to put a private chat in moderated mode. Are you serious?!? You're fired."
 
+
 def kickAll(fro, chan, message):
 	# Kick everyone but mods/admins
 	toKick = []
@@ -133,6 +144,7 @@ def kickAll(fro, chan, message):
 			glob.tokens.tokens[i].kick()
 
 	return "Whoops! Rip everyone."
+
 
 def kick(fro, chan, message):
 	# Get parameters
@@ -152,6 +164,7 @@ def kick(fro, chan, message):
 	# Bot response
 	return "{} has been kicked from the server.".format(target)
 
+
 def fokabotReconnect(fro, chan, message):
 	# Check if fokabot is already connected
 	if glob.tokens.getTokenFromUserID(999) is not None:
@@ -160,6 +173,7 @@ def fokabotReconnect(fro, chan, message):
 	# Fokabot is not connected, connect it
 	fokabot.connect()
 	return False
+
 
 def silence(fro, chan, message):
 	message = [x.lower() for x in message]
@@ -209,6 +223,7 @@ def silence(fro, chan, message):
 	msg = "{} has been silenced for the following reason: {}".format(target, reason)
 	return msg
 
+
 def removeSilence(fro, chan, message):
 	# Get parameters
 	for i in message:
@@ -231,6 +246,7 @@ def removeSilence(fro, chan, message):
 		userUtils.silence(targetUserID, 0, "", userID)
 
 	return "{}'s silence reset".format(target)
+
 
 def ban(fro, chan, message):
 	# Get parameters
@@ -255,6 +271,7 @@ def ban(fro, chan, message):
 	log.rap(userID, "has banned {}".format(target), True)
 	return "RIP {}. You will not be missed.".format(target)
 
+
 def unban(fro, chan, message):
 	# Get parameters
 	for i in message:
@@ -272,6 +289,7 @@ def unban(fro, chan, message):
 
 	log.rap(userID, "has unbanned {}".format(target), True)
 	return "Welcome back {}!".format(target)
+
 
 def restrict(fro, chan, message):
 	# Get parameters
@@ -296,6 +314,7 @@ def restrict(fro, chan, message):
 	log.rap(userID, "has put {} in restricted mode".format(target), True)
 	return "Bye bye {}. See you later, maybe.".format(target)
 
+
 def unrestrict(fro, chan, message):
 	# Get parameters
 	for i in message:
@@ -314,21 +333,26 @@ def unrestrict(fro, chan, message):
 	log.rap(userID, "has removed restricted mode from {}".format(target), True)
 	return "Welcome back {}!".format(target)
 
+
 def restartShutdown(restart):
 	"""Restart (if restart = True) or shutdown (if restart = False) pep.py safely"""
 	msg = "We are performing some maintenance. Bancho will {} in 5 seconds. Thank you for your patience.".format("restart" if restart else "shutdown")
 	systemHelper.scheduleShutdown(5, restart, msg)
 	return msg
 
+
 def systemRestart(fro, chan, message):
 	return restartShutdown(True)
+
 
 def systemShutdown(fro, chan, message):
 	return restartShutdown(False)
 
+
 def systemReload(fro, chan, message):
 	glob.banchoConf.reload()
 	return "Bancho settings reloaded!"
+
 
 def systemMaintenance(fro, chan, message):
 	# Turn on/off bancho maintenance
@@ -363,6 +387,7 @@ def systemMaintenance(fro, chan, message):
 
 	# Chat output
 	return msg
+
 
 def systemStatus(fro, chan, message):
 	# Print some server info
@@ -460,6 +485,7 @@ def getPPMessage(userID, just_data = False):
 		# Unknown exception
 		# TODO: print exception
 	#	return False
+
 
 def tillerinoNp(fro, chan, message):
 	try:
@@ -1212,79 +1238,79 @@ commands = [
 	}, {
 		"trigger": "!alert",
 		"syntax": "<message>",
-		"privileges": privileges.ADMIN_SEND_ALERTS,
+		"privileges": "gmt",
 		"callback": alert
 	}, {
 		"trigger": "!alertuser",
 		"syntax": "<username> <message>",
-		"privileges": privileges.ADMIN_SEND_ALERTS,
+		"privileges": "gmt",
 		"callback": alertUser,
 	}, {
 		"trigger": "!moderated",
-		"privileges": privileges.ADMIN_CHAT_MOD,
+		"privileges": "gmt",
 		"callback": moderated
 	}, {
 		"trigger": "!kickall",
-		"privileges": privileges.ADMIN_MANAGE_SERVERS,
+		"privileges": "admin",
 		"callback": kickAll
 	}, {
 		"trigger": "!kick",
 		"syntax": "<target>",
-		"privileges": privileges.ADMIN_KICK_USERS,
+		"privileges": "admin",
 		"callback": kick
 	}, {
 		"trigger": "!fokabot reconnect",
-		"privileges": privileges.ADMIN_MANAGE_SERVERS,
+		"privileges": "admin",
 		"callback": fokabotReconnect
 	}, {
 		"trigger": "!silence",
 		"syntax": "<target> <amount> <unit(s/m/h/d)> <reason>",
-		"privileges": privileges.ADMIN_SILENCE_USERS,
+		"privileges": "gmt",
 		"callback": silence
 	}, {
 		"trigger": "!removesilence",
 		"syntax": "<target>",
-		"privileges": privileges.ADMIN_SILENCE_USERS,
+		"privileges": "gmt",
 		"callback": removeSilence
 	}, {
 		"trigger": "!system restart",
-		"privileges": privileges.ADMIN_MANAGE_SERVERS,
+		"privileges": "admin",
 		"callback": systemRestart
 	}, {
 		"trigger": "!system shutdown",
-		"privileges": privileges.ADMIN_MANAGE_SERVERS,
+		"privileges": "admin",
 		"callback": systemShutdown
 	}, {
 		"trigger": "!system reload",
-		"privileges": privileges.ADMIN_MANAGE_SETTINGS,
+		"privileges": "admin",
 		"callback": systemReload
 	}, {
 		"trigger": "!system maintenance",
-		"privileges": privileges.ADMIN_MANAGE_SERVERS,
+		"privileges": "admin",
 		"callback": systemMaintenance
 	}, {
 		"trigger": "!system status",
-		"privileges": privileges.ADMIN_MANAGE_SERVERS,
+		"privileges": "admin",
 		"callback": systemStatus
 	}, {
 		"trigger": "!ban",
 		"syntax": "<target>",
-		"privileges": privileges.ADMIN_BAN_USERS,
+		"privileges": "gmt",
 		"callback": ban
 	}, {
 		"trigger": "!unban",
 		"syntax": "<target>",
-		"privileges": privileges.ADMIN_BAN_USERS,
+		"privileges": "gmt",
 		"callback": unban
 	}, {
 		"trigger": "!restrict",
 		"syntax": "<target>",
-		"privileges": privileges.ADMIN_BAN_USERS,
+		"privileges": "gmt",
 		"callback": restrict
 	}, {
 		"trigger": "!unrestrict",
 		"syntax": "<target>",
-		"privileges": privileges.ADMIN_BAN_USERS,
+		"privileges": "gmt",
 		"callback": unrestrict
 	}, {
 		"trigger": "\x01ACTION is listening to",
@@ -1301,7 +1327,7 @@ commands = [
 		"syntax": "<mods>"
 	}, {
 		"trigger": "!ir",
-		"privileges": privileges.ADMIN_MANAGE_SERVERS,
+		"privileges": "gmt",
 		"callback": instantRestart
 	}, {
 		"trigger": "!pp",
@@ -1311,7 +1337,7 @@ commands = [
 		"callback": updateBeatmap
 	}, {
 		"trigger": "!mp",
-		"privileges": privileges.USER_TOURNAMENT_STAFF,
+		#"privileges": privileges.USER_TOURNAMENT_STAFF,
 		"syntax": "<subcommand>",
 		"callback": multiplayer
 	}, {
@@ -1332,7 +1358,7 @@ commands = [
 		"callback": delta
 	}, {
 		"trigger": "!reloadconfig",
-		"privileges": privileges.ADMIN_MANAGE_SERVERS,
+		"privileges": "admin",
 		"callback": reloadConfig
 	}
 	#

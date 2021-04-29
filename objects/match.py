@@ -71,7 +71,7 @@ class match:
 
 		# Create all slots and reset them
 		self.slots = []
-		for _ in range(0,16):
+		for _ in range(0, 16):
 			self.slots.append(slot())
 
 		# Create streams
@@ -111,15 +111,15 @@ class match:
 		])
 
 		# Slots status IDs, always 16 elements
-		for i in range(0,16):
+		for i in range(0, 16):
 			struct.append([self.slots[i].status, dataTypes.BYTE])
 
 		# Slot teams, always 16 elements
-		for i in range(0,16):
+		for i in range(0, 16):
 			struct.append([self.slots[i].team, dataTypes.BYTE])
 
 		# Slot user ID. Write only if slot is occupied
-		for i in range(0,16):
+		for i in range(0, 16):
 			if self.slots[i].user is not None and self.slots[i].user in glob.tokens.tokens:
 				struct.append([glob.tokens.tokens[self.slots[i].user].userID, dataTypes.UINT32])
 
@@ -475,7 +475,7 @@ class match:
 
 		:return: slot id if found, None if user is not in room
 		"""
-		for i in range(0,16):
+		for i in range(0, 16):
 			if self.slots[i].user is not None and self.slots[i].user in glob.tokens.tokens and glob.tokens.tokens[self.slots[i].user].userID == userID:
 				return i
 		return None
@@ -488,7 +488,7 @@ class match:
 		:return: True if join success, False if fail (room is full)
 		"""
 		# Make sure we're not in this match
-		for i in range(0,16):
+		for i in range(0, 16):
 			if self.slots[i].user == user.token:
 				# Set bugged slot to free
 				self.setSlot(i, slotStatuses.FREE, 0, None, 0)

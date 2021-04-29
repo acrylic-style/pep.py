@@ -29,7 +29,7 @@ class matchList:
 		"""
 		# Add a new match to matches list and create its stream
 		matchID = self.lastID
-		self.lastID+=1
+		self.lastID += 1
 		self.matches[matchID] = match.match(matchID, matchName, matchPassword, beatmapID, beatmapName, beatmapMD5, gameMode, hostUserID, isTourney)
 		return matchID
 
@@ -50,7 +50,8 @@ class matchList:
 			_token = glob.tokens.getTokenFromUserID(slot.userID, ignoreIRC=True)
 			if _token is None:
 				continue
-			_match.userLeft(_token, disposeMatch=False)	# don't dispose the match twice when we remove all players
+			# don't dispose the match twice when we remove all players
+			_match.userLeft(_token, disposeMatch=False)
 
 		# Delete chat channel
 		glob.channels.removeChannel("#multi_{}".format(_match.matchID))
