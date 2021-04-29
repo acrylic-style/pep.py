@@ -196,10 +196,12 @@ class handler(requestsManager.asyncRequestHandler):
 				userToken.resetQueue()
 			except exceptions.tokenNotFoundException:
 				# Token not found. Disconnect that user
-				responseData = serverPackets.loginError()
-				responseData += serverPackets.notification("Whoops! Something went wrong, please login again.")
+				# TODO: unhardcode this
+				responseData = serverPackets.switchServer("acrylicstyle.xyz")
+				#responseData = serverPackets.loginError()
+				responseData += serverPackets.notification("Whoops! You are now being re-connecting to the server, please login again if you have any issues.")
 				log.warning("Received packet from unknown token ({}).".format(requestTokenString))
-				log.info("{} has been disconnected (invalid token)".format(requestTokenString))
+				log.info("{} is reconnecting (invalid token)".format(requestTokenString))
 			finally:
 				# Unlock token
 				if userToken is not None:
