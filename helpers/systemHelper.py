@@ -5,8 +5,6 @@ import sys
 import threading
 import time
 
-import psutil
-
 from common.constants import bcolors
 from common.log import logUtils as log
 from constants import serverPackets
@@ -106,15 +104,14 @@ def getSystemInfo():
 	seconds = math.floor(delta)
 
 	data["uptime"] = "{}d {}h {}m {}s".format(days, hours, minutes, seconds)
-	data["cpuUsage"] = psutil.cpu_percent()
-	memory = psutil.virtual_memory()
-	data["totalMemory"] = "{0:.2f}".format(memory.total/1074000000)
-	data["usedMemory"] = "{0:.2f}".format(memory.active/1074000000)
+	data["cpuUsage"] = 0
+	data["totalMemory"] = "0"
+	data["usedMemory"] = "0"
 
 	# Unix only stats
 	if data["unix"]:
 		data["loadAverage"] = os.getloadavg()
 	else:
-		data["loadAverage"] = (0,0,0)
+		data["loadAverage"] = (0, 0, 0)
 
 	return data
